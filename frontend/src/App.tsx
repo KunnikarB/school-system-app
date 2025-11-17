@@ -1,45 +1,38 @@
 import { useState } from 'react';
 import Login from './components/Login';
 import AdminLogin from './components/AdminLogin'; 
+import StudentGrades from './components/StudentGrades';
 import './index.css'
 
-type Page = 'student-login' | 'admin-login';
+type Page = 'student-login' | 'admin-login' | 'student-grades' | 'admin-dashboard';
 
 function App() {
   const [currentPage, setCurrentPage] = useState<Page>('student-login');
 
   const studentName = 'Kunnikar';
 
-  const adminName = 'Michiel';
-
   const navigateTo = (page: Page) => setCurrentPage(page);
 
   const renderPage = () => {
     switch (currentPage) {
       case 'student-login':
-        return (
-          <Login
-            onLogin={() => {
-              alert(`Welcome back, ${studentName}!`);
-            }}
-            onAdminLinkClick={() => navigateTo('admin-login')}
-          />
-        );
+        return <Login onLogin={() => navigateTo('student-grades')} onAdminLinkClick={() => navigateTo('admin-login')} />;
       case 'admin-login':
-        return (
-          <AdminLogin
-            onLogin={() => {
-              alert(`Welcome back, Admin ${adminName}!`);
-            }}
-            onStudentLinkClick={() => navigateTo('student-login')}
-          />
-        );
+        return <AdminLogin onLogin={() => navigateTo('admin-dashboard')} onStudentLinkClick={() => navigateTo('student-login')} />;
+      case 'student-grades':
+        return <StudentGrades studentName={studentName} onLogout={() => navigateTo('student-login')} />;
+      case 'admin-dashboard':
+        return <div>Admin dashboard (placeholder)</div>;
       default:
-        return null;
+        return <Login onLogin={() => navigateTo('student-grades')} onAdminLinkClick={() => navigateTo('admin-login')} />;
     }
   };
 
-  return <div className="min-h-screen bg-white">{renderPage()}</div>;
+  return (
+    <div className="app">
+      {renderPage()}
+    </div>
+  );
 }
 
-export default App
+export default App;
