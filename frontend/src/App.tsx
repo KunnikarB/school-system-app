@@ -1,35 +1,84 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import Login from './components/Login';
+import AdminLogin from './components/AdminLogin';
+import StudentGrades from './components/StudentGrades';
+import AdminDashboard from './components/AdminDashboard';
+import AdminRegisterGrades from './components/AdminRegisterGrades';
+import AdminStudentAccounts from './components/AdminStudentAccounts';
 
-function App() {
-  const [count, setCount] = useState(0)
+// Define App 'pages' for navigation
+type Page =
+  | 'student-login'
+  | 'admin-login'
+  | 'student-grades'
+  | 'admin-dashboard'
+  | 'admin-register-grades'
+  | 'admin-accounts';
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+export default function App() {
+  const [currentPage, setCurrentPage] = useState<Page>('student-login');
+  // Dummy user for student view
+  const studentName = 'Kunnikar Boonbunlu';
+  // Dummy user for admin view
+  const adminName = 'Michiel vd Gragt';
+
+  const navigateTo = (page: Page) => setCurrentPage(page);
+
+  const renderPage = () => {
+    switch (currentPage) {
+      case 'student-login':
+        return (
+          <Login
+            onLogin={() => navigateTo('student-grades')}
+            onAdminLinkClick={() => navigateTo('admin-login')}
+          />
+        );
+      case 'admin-login':
+        return (
+          <AdminLogin
+            onLogin={() => navigateTo('admin-dashboard')}
+            onStudentLinkClick={() => navigateTo('student-login')}
+          />
+        );
+      case 'student-grades':
+        return (
+          <StudentGrades
+            studentName={studentName}
+            onLogout={() => navigateTo('student-login')}
+          />
+        );
+      case 'admin-dashboard':
+        return (
+          <AdminDashboard
+            adminName={adminName}
+            onRegisterGrades={() => navigateTo('admin-register-grades')}
+            onAdminAccounts={() => navigateTo('admin-accounts')}
+            onLogout={() => navigateTo('admin-login')}
+          />
+        );
+      case 'admin-register-grades':
+        return (
+          <AdminRegisterGrades
+            adminName={adminName}
+            onBack={() => navigateTo('admin-dashboard')}
+          />
+        );
+      case 'admin-accounts':
+        return (
+          <AdminStudentAccounts
+            adminName={adminName}
+            onBack={() => navigateTo('admin-dashboard')}
+          />
+        );
+      default:
+        return (
+          <Login
+            onLogin={() => navigateTo('student-grades')}
+            onAdminLinkClick={() => navigateTo('admin-login')}
+          />
+        );
+    }
+  };
+
+  return <div className="min-h-screen bg-white">{renderPage()}</div>;
 }
-
-export default App
