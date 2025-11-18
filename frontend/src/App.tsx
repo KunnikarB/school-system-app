@@ -3,6 +3,7 @@ import Login from './components/Login';
 import AdminLogin from './components/AdminLogin'; 
 import StudentGrades from './components/StudentGrades';
 import AdminDashboard from './components/AdminDashboard';
+import AdminRegisterGrades from './components/AdminRegisterGrades';
 import './index.css'
 
 type Page = 'student-login' | 'admin-login' | 'student-grades' | 'admin-dashboard';
