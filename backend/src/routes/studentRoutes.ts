@@ -1,12 +1,12 @@
 import "dotenv/config";
 import { Router } from "express";
-import { PrismaClient } from "../generated/prisma-client/client.ts";
+import { PrismaClient } from "../generated/prisma-client/client.js";
 import { z } from "zod";
 import {
   gradeSchema,
   studentSchema,
   subjectSchema,
-} from "../validators/valdation.ts";
+} from "../validators/valdation.js";
 
 const prisma = new PrismaClient();
 const router = Router();

@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import studentRoutes from "./src/routes/studentRoutes.ts";
+import studentRoutes from "./src/routes/studentRoutes.js";
 import type { CorsOptions } from "cors";
 
 const corsOptions: CorsOptions = {
