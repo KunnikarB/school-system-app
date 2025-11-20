@@ -4,7 +4,7 @@ import { readFile } from "fs/promises";
 const serviceAccount = JSON.parse(
   (
     await readFile(
-      new URL("../firebase/firebaseServiceAccountKey.json", import.meta.url)
+      new URL("../firebaseServiceAccountKey.json", import.meta.url)
     )
   ).toString() // Convert Buffer to string
 );
