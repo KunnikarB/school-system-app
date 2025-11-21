@@ -1,38 +1,58 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-
 import { signInUser, createUser } from "../auth/authService";
+import { updateProfile } from "firebase/auth";
+import { toast } from "react-hot-toast";
+
+interface UserCredentials {
+  email: string;
+  password: string;
+}
+
 export default function Login() {
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
-  interface UserCredintials {
-    email: string;
-    password: string;
-  }
-
-  const UserCredintials: UserCredintials = {
-    email: email,
-    password: password,
+  const userCredentials: UserCredentials = {
+    email,
+    password,
   };
+
   const handleRegister = async () => {
-    if (!email || !password) {
-      alert("Please enter both email and password.");
+    if (!email || !password || !username) {
+      alert("Please enter username, email, and password.");
       return;
     }
-    await createUser(UserCredintials);
-    console.log("Creasting User with:", UserCredintials);
+    const newUser = await createUser(userCredentials);
+    if (newUser) {
+      toast.success(`Registration successful!`);
+      await updateProfile(newUser, {
+        displayName: username,
+      });
+    }
+
+    console.log("Creating User with:", userCredentials);
   };
+
   const handleLogin = async () => {
-    if (!email || !password) {
-      alert("Please enter both email and password.");
+    if (!email || !password || !username) {
+      alert("Please enter the username, email, and password to log in.");
       return;
     }
-    console.log("Logging in with:", UserCredintials);
-    await signInUser(UserCredintials);
-    navigate("/student-grades");
+    const loggedIn = await signInUser(userCredentials);
+    if (!loggedIn) {
+      alert(
+        "Login failed. Please provide the correct username, email, and password used while registering the account."
+      );
+      return;
+    }
+    toast.success("Logging in successful!");
+    setTimeout(() => {
+      navigate(`/student/grades`);
+    }, 2000);
   };
 
   return (
@@ -43,6 +63,26 @@ export default function Login() {
         </h2>
 
         <div className="space-y-4">
+          {/* Username */}
+          <div>
+            <label
+              htmlFor="username"
+              className="block text-m font-medium text-black"
+            >
+              Username:
+            </label>
+
+            <input
+              id="username"
+              type="text"
+              placeholder="Enter your username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="placeholder:text-sm mt-1 block w-full px-3 py-2 border border-pink-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500"
+            />
+          </div>
+
+          {/* Email */}
           <div>
             <label
               htmlFor="email"
@@ -50,6 +90,7 @@ export default function Login() {
             >
               Email:
             </label>
+
             <input
               id="email"
               type="email"
@@ -60,6 +101,7 @@ export default function Login() {
             />
           </div>
 
+          {/* Password */}
           <div>
             <label
               htmlFor="password"
@@ -67,6 +109,7 @@ export default function Login() {
             >
               Password:
             </label>
+
             <input
               id="password"
               type="password"
@@ -77,30 +120,15 @@ export default function Login() {
             />
           </div>
 
-          <div className="flex items-center justify-between">
-            <label className="flex items-center">
-              <input
-                type="checkbox"
-                defaultChecked
-                className="h-4 w-4 text-pink-400 border-gray-300 rounded"
-              />
-              <span className="ml-2 text-sm text-black">Remember Me</span>
-            </label>
-            <a
-              href="#"
-              className="text-sm text-pink-600 hover:text-pink-500 ml-4"
-            >
-              Forgot password?
-            </a>
-          </div>
-
-          {/* Login Button */}
+          {/* Login button */}
           <button
             onClick={handleLogin}
             className="w-full font-bold bg-pink-400 text-white py-2 px-4 rounded-md hover:bg-pink-500 focus:outline-pink-300 focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
           >
             Login
           </button>
+
+          {/* Register button */}
           <button
             onClick={handleRegister}
             className="w-full font-bold bg-gray-200 text-black py-2 px-4 rounded-md hover:bg-gray-300 focus:outline-gray-300 focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
@@ -110,7 +138,6 @@ export default function Login() {
         </div>
       </div>
 
-      {/* Admin Button (Navigate) */}
       <button
         onClick={() => navigate("/admin-login")}
         className="absolute bottom-20 right-40 text-m font-bold text-white hover:text-black border-none bg-pink-400 p-2 rounded-md"
