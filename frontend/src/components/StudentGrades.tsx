@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface Grade {
   grade: string;
@@ -19,15 +20,12 @@ interface Student {
 
 interface StudentGradesProps {
   studentId: number;
-  onLogout: () => void;
 }
 
 const years = ['Year 1', 'Year 2', 'Year 3', 'All'];
 
-export default function StudentGrades({
-  studentId,
-  onLogout,
-}: StudentGradesProps) {
+export default function StudentGrades({ studentId }: StudentGradesProps) {
+  const navigate = useNavigate();
   const [student, setStudent] = useState<Student | null>(null);
   const [grades, setGrades] = useState<Grade[]>([]);
   const [loading, setLoading] = useState(true);
@@ -53,6 +51,10 @@ export default function StudentGrades({
     fetchData();
   }, [studentId]);
 
+  const handleLogout = () => {
+    navigate('/');
+  };
+
   const yearNumber =
     selectedYear === 'All' ? null : Number(selectedYear.split(' ')[1]);
   const filteredGrades = grades.filter(
@@ -66,10 +68,10 @@ export default function StudentGrades({
     <div className="p-10 bg-pink-200 min-h-screen">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">
-          {student.firstName} {student.lastName}'s Grades
+          {student.firstName} {student.lastName}'s Profile
         </h1>
         <button
-          onClick={onLogout}
+          onClick={handleLogout}
           className="px-4 py-2 bg-pink-400 text-white rounded"
         >
           Logout
