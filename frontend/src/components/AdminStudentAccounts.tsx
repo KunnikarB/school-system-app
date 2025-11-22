@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
+import type { ChangeEvent } from 'react';
 
 interface Student {
   id: number;
   firstName: string;
   lastName: string;
+  email: string;
   personNr: string;
   year: number;
   phone?: string | null;
@@ -35,11 +37,8 @@ export default function AdminStudentAccounts({
       try {
         const res = await fetch('http://localhost:5001/admin/students');
         const data = await res.json();
-        if (res.ok) {
-          setStudents(data);
-        } else {
-          console.error('Failed to fetch students:', data);
-        }
+        if (res.ok) setStudents(data);
+        else console.error('Failed to fetch students:', data);
       } catch (err) {
         console.error(err);
       } finally {
@@ -50,6 +49,13 @@ export default function AdminStudentAccounts({
   }, []);
 
   const filteredStudents = students.filter((s) => s.year === yearNumber);
+
+  const handleCsvImport = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+    const file = e.target.files[0];
+    console.log('CSV file selected:', file.name);
+    // TODO: implement CSV parsing and upload
+  };
 
   if (loading) return <div className="p-10">Loading students...</div>;
 
@@ -82,6 +88,19 @@ export default function AdminStudentAccounts({
         ))}
       </div>
 
+      {/* CSV IMPORT BUTTON */}
+      <div className="mt-4">
+        <label className="bg-green-400 text-white px-4 py-2 rounded cursor-pointer hover:bg-green-500">
+          Import CSV
+          <input
+            type="file"
+            accept=".csv"
+            onChange={handleCsvImport}
+            className="hidden"
+          />
+        </label>
+      </div>
+
       {/* STUDENTS TABLE */}
       <h2 className="text-2xl font-semibold mt-8">Students</h2>
       <div className="mt-4 border border-gray-300 rounded-lg overflow-hidden">
@@ -92,10 +111,10 @@ export default function AdminStudentAccounts({
                 Name
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                PersonNr
+                Email
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Year
+                PersonNr
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Phone
@@ -116,8 +135,8 @@ export default function AdminStudentAccounts({
                 <td className="px-6 py-4 text-sm font-medium">
                   {s.firstName} {s.lastName}
                 </td>
+                <td className="px-6 py-4 text-sm">{s.email}</td>
                 <td className="px-6 py-4 text-sm">{s.personNr}</td>
-                <td className="px-6 py-4 text-sm">{s.year}</td>
                 <td className="px-6 py-4 text-sm">{s.phone || '-'}</td>
                 <td className="px-6 py-4 text-sm">{s.adress || '-'}</td>
               </tr>
@@ -135,6 +154,7 @@ export default function AdminStudentAccounts({
           <p className="font-bold mb-2">
             {hoverStudent.firstName} {hoverStudent.lastName}
           </p>
+          <p className="text-sm">Email: {hoverStudent.email}</p>
           <p className="text-sm">
             PersonNr: <span className="font-mono">{hoverStudent.personNr}</span>
           </p>
