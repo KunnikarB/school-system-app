@@ -104,33 +104,33 @@ export default function StudentGrades() {
       <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between">
         {/* Year Filter */}
         <div className="mt-6 flex gap-2 flex-wrap">
-        {years.map((y) => (
-          <button
-            key={y}
-            onClick={() => setSelectedYear(y)}
-            className={`px-4 py-2 rounded ${
-              selectedYear === y ? 'bg-pink-400 text-white' : 'bg-gray-100'
-            }`}
-          >
-            {y}
-          </button>
-        ))}
+          {years.map((y) => (
+            <button
+              key={y}
+              onClick={() => setSelectedYear(y)}
+              className={`px-4 py-2 rounded ${
+                selectedYear === y ? 'bg-pink-400 text-white' : 'bg-gray-100'
+              }`}
+            >
+              {y}
+            </button>
+          ))}
         </div>
 
         <div className="mt-4">
-        {/* Subject Dropdown */}
-        <select
-          value={selectedSubject}
-          onChange={(e) => setSelectedSubject(e.target.value)}
-          className="ml-4 px-3 py-2 rounded bg-pink-400 cursor-pointer text-white"
-        >
-          <option value="All">All Subjects</option>
-          {subjects.map((s) => (
-            <option key={s} value={s}>
-              {s}
-            </option>
-          ))}
-        </select>
+          {/* Subject Dropdown */}
+          <select
+            value={selectedSubject}
+            onChange={(e) => setSelectedSubject(e.target.value)}
+            className="ml-4 px-3 py-2 rounded bg-pink-400 cursor-pointer text-white"
+          >
+            <option value="All">All Subjects</option>
+            {subjects.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
@@ -140,14 +140,19 @@ export default function StudentGrades() {
           <tr>
             <th className="border px-4 py-2">Course</th>
             <th className="border px-4 py-2">Grade</th>
-            <th className="border px-4 py-2">Year</th>
+            {selectedYear === 'All' && (
+              <th className="border px-4 py-2">Year</th>
+            )}
             <th className="border px-4 py-2">Level</th>
           </tr>
         </thead>
         <tbody>
           {filteredGrades.length === 0 ? (
             <tr>
-              <td colSpan={4} className="text-center py-4">
+              <td
+                colSpan={selectedYear === 'All' ? 4 : 3}
+                className="text-center py-4"
+              >
                 No grades for this filter.
               </td>
             </tr>
@@ -156,7 +161,9 @@ export default function StudentGrades() {
               <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                 <td className="border px-4 py-2">{g.subject || g.course}</td>
                 <td className="border px-4 py-2">{g.grade}</td>
-                <td className="border px-4 py-2">{g.year || '-'}</td>
+                {selectedYear === 'All' && (
+                  <td className="border px-4 py-2">{g.year || '-'}</td>
+                )}
                 <td className="border px-4 py-2">{g.level || '-'}</td>
               </tr>
             ))
