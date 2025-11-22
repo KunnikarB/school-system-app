@@ -54,7 +54,7 @@ export default function AdminStudentAccounts({
     if (!e.target.files) return;
     const file = e.target.files[0];
     console.log('CSV file selected:', file.name);
-    // TODO: implement CSV parsing and upload
+    // implement CSV parsing and upload
   };
 
   if (loading) return <div className="p-10">Loading students...</div>;
@@ -71,34 +71,37 @@ export default function AdminStudentAccounts({
         </button>
       </div>
 
-      {/* YEAR TABS */}
-      <div className="mt-6 flex gap-2">
-        {years.map((y) => (
-          <button
-            key={y}
-            className={`px-4 py-2 rounded border border-gray-300 transition-colors ${
-              selectedYear === y
-                ? 'bg-pink-400 text-white font-semibold'
-                : 'bg-gray-100 hover:bg-gray-200'
-            }`}
-            onClick={() => setSelectedYear(y)}
-          >
-            {y}
-          </button>
-        ))}
-      </div>
+      {/* YEAR TABS + CSV IMPORT BUTTON */}
+      <div className="mt-6 flex justify-between items-center">
+        <div className="flex gap-2">
+          {years.map((y) => (
+            <button
+              key={y}
+              className={`px-4 py-2 rounded border border-gray-300 transition-colors ${
+                selectedYear === y
+                  ? 'bg-pink-400 text-white font-semibold'
+                  : 'bg-gray-100 hover:bg-gray-200'
+              }`}
+              onClick={() => setSelectedYear(y)}
+            >
+              {y}
+            </button>
+          ))}
+        </div>
 
-      {/* CSV IMPORT BUTTON */}
-      <div className="mt-4">
-        <label className="bg-green-400 text-white px-4 py-2 rounded cursor-pointer hover:bg-green-500">
-          Import CSV
-          <input
-            type="file"
-            accept=".csv"
-            onChange={handleCsvImport}
-            className="hidden"
-          />
-        </label>
+        <div>
+          <div className="mt-4">
+            <label className="bg-pink-400 text-white px-4 py-2 rounded cursor-pointer hover:bg-pink-500">
+              Import CSV
+              <input
+                type="file"
+                accept=".csv"
+                onChange={handleCsvImport}
+                className="hidden"
+              />
+            </label>
+          </div>
+        </div>
       </div>
 
       {/* STUDENTS TABLE */}
