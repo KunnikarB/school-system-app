@@ -112,6 +112,7 @@ router.get('/all', async (req, res) => {
 
     // Map to frontend-friendly structure
     const formatted = grades.map((g) => ({
+      id: g.id,
       firstName: g.student.firstName,
       lastName: g.student.lastName,
       grade: g.grade,
