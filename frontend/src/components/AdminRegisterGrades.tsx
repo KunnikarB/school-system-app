@@ -104,7 +104,7 @@ export default function AdminRegisterGrades({ adminName }: AdminRegisterGradesPr
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-100 font-semibold">
               <tr>
-                <th className="px-6 py-3 text-left">Subject</th>
+                <th className="px-6 py-3 text-left">Course</th>
                 <th className="px-6 py-3 text-left">Level</th>
                 <th className="px-6 py-3 text-left">Grades</th>
               </tr>
