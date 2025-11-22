@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 interface StudentGrade {
-  id: number; 
   firstName: string;
   lastName: string;
   grade: string;
@@ -18,7 +17,6 @@ interface AdminRegisterGradesProps {
 }
 
 const years = ['All', 'Year 1', 'Year 2', 'Year 3'];
-const gradeOptions = ['A', 'B', 'C', 'D', 'E', 'F'];
 
 export default function AdminRegisterGrades({
   adminName,
@@ -28,8 +26,6 @@ export default function AdminRegisterGrades({
   const [loading, setLoading] = useState(false);
   const [selectedYear, setSelectedYear] = useState('All');
   const [selectedSubject, setSelectedSubject] = useState('All');
-  const [editingGradeId, setEditingGradeId] = useState<number | null>(null);
-  const [newGrade, setNewGrade] = useState<string>('');
 
   // Fetch all grades
   useEffect(() => {
@@ -37,7 +33,7 @@ export default function AdminRegisterGrades({
       setLoading(true);
       try {
         const res = await axios.get<StudentGrade[]>(
-          'http://localhost:5001/admin/grades/all'
+          'http://localhost:5001/admin/grades/all' // backend must return firstName, lastName, grade, subject, level?, year, updatedAt
         );
         setGrades(res.data);
       } catch (err) {
@@ -46,6 +42,7 @@ export default function AdminRegisterGrades({
         setLoading(false);
       }
     };
+
     fetchGrades();
   }, []);
 
@@ -59,28 +56,8 @@ export default function AdminRegisterGrades({
     return matchYear && matchSubject;
   });
 
-  // Unique subjects for dropdown
+  // Extract unique subjects for dropdown
   const subjects = Array.from(new Set(grades.map((g) => g.subject)));
-
-  // Update grade handler
-  const handleUpdateGrade = async (gradeId: number) => {
-    try {
-      await axios.put(`http://localhost:5001/admin/grades/${gradeId}`, {
-        grade: newGrade,
-      });
-      // Update local state
-      setGrades((prev) =>
-        prev.map((g) =>
-          g.id === gradeId
-            ? { ...g, grade: newGrade, updatedAt: new Date().toISOString() }
-            : g
-        )
-      );
-      setEditingGradeId(null);
-    } catch (err) {
-      console.error('Failed to update grade', err);
-    }
-  };
 
   return (
     <div className="p-10 bg-pink-200 min-h-screen font-sans">
@@ -113,7 +90,7 @@ export default function AdminRegisterGrades({
         </div>
         <div>
           <select
-            className="px-4 py-2 rounded bg-pink-400 text-white font-semibold"
+            className="px-4 py-2 rounded border bg-white"
             value={selectedSubject}
             onChange={(e) => setSelectedSubject(e.target.value)}
           >
@@ -137,64 +114,27 @@ export default function AdminRegisterGrades({
                 <th className="px-6 py-3 text-left">Student Name</th>
                 <th className="px-6 py-3 text-left">Grade</th>
                 <th className="px-6 py-3 text-left">Date</th>
-                <th className="px-6 py-3 text-left">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
               {filteredGrades.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={4}
+                    colSpan={3}
                     className="text-center py-4 text-gray-500 italic"
                   >
                     No grades found for this filter.
                   </td>
                 </tr>
               ) : (
-                filteredGrades.map((g) => (
-                  <tr key={g.id} className="hover:bg-pink-50">
+                filteredGrades.map((g, i) => (
+                  <tr key={i} className="hover:bg-pink-50">
                     <td className="px-6 py-3">
                       {g.firstName} {g.lastName}
                     </td>
-                    <td className="px-6 py-3">
-                      {editingGradeId === g.id ? (
-                        <select
-                          value={newGrade}
-                          onChange={(e) => setNewGrade(e.target.value)}
-                          className="px-2 py-1 border rounded"
-                        >
-                          {gradeOptions.map((opt) => (
-                            <option key={opt} value={opt}>
-                              {opt}
-                            </option>
-                          ))}
-                        </select>
-                      ) : (
-                        g.grade
-                      )}
-                    </td>
+                    <td className="px-6 py-3">{g.grade}</td>
                     <td className="px-6 py-3">
                       {new Date(g.updatedAt).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-3">
-                      {editingGradeId === g.id ? (
-                        <button
-                          className="bg-green-400 text-white px-2 py-1 rounded mr-2"
-                          onClick={() => handleUpdateGrade(g.id)}
-                        >
-                          Save
-                        </button>
-                      ) : (
-                        <button
-                          className="bg-blue-400 text-white px-2 py-1 rounded"
-                          onClick={() => {
-                            setEditingGradeId(g.id);
-                            setNewGrade(g.grade);
-                          }}
-                        >
-                          Edit
-                        </button>
-                      )}
                     </td>
                   </tr>
                 ))
