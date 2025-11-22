@@ -62,7 +62,7 @@ export default function AdminRegisterGrades({
   return (
     <div className="p-10 bg-pink-200 min-h-screen font-sans">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">📚 Student Grades Overview</h1>
+        <h1 className="text-3xl font-bold">Register Grades</h1>
         <button
           className="bg-pink-400 text-white px-3 py-1 rounded"
           onClick={() => navigate('/admin-dashboard')}
@@ -90,7 +90,7 @@ export default function AdminRegisterGrades({
         </div>
         <div>
           <select
-            className="px-4 py-2 rounded border bg-white"
+            className="px-4 py-2 rounded bg-pink-400 text-white font-semibold"
             value={selectedSubject}
             onChange={(e) => setSelectedSubject(e.target.value)}
           >
