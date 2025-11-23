@@ -15,6 +15,8 @@ export default function Login() {
   const [userlastname, setUserlastname] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [loadingRegister, setLoadingRegister] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const userCredentials: UserCredentials = {
     email,
@@ -27,17 +29,24 @@ export default function Login() {
       alert("Please enter username, email, and password.");
       return;
     }
+    setLoadingRegister(true);
+    try {
+      const newUser = await createUser(userCredentials);
+      if (newUser) {
+        await new Promise((r) => setTimeout(r, 400));
+        toast.success(`Registration successful!`);
+        await updateProfile(newUser, {
+          displayName: username, //from firebase.auth().currentUser
+        });
+      }
 
-    const newUser = await createUser(userCredentials);
-    if (newUser) {
-      toast.success(`Registration successful!`);
-      await updateProfile(newUser, {
-        displayName: username, //from firebase.auth().currentUser
-      });
+      console.log("Creating User with:", userCredentials);
+      console.log("New user created:", newUser);
+    } catch (err) {
+      console.error("Error during registration:", err);
+    } finally {
+      setLoadingRegister(false);
     }
-
-    console.log("Creating User with:", userCredentials);
-    console.log("New user created:", newUser);
   };
 
   const handleLogin = async () => {
@@ -47,17 +56,25 @@ export default function Login() {
       );
       return;
     }
-    const loggedIn = await signInUser(userCredentials);
-    if (!loggedIn) {
-      alert(
-        "Please Register first. If already registered, please provide the correct firstname, lastname, email, and password used while registering the account."
-      );
-      return;
+    setLoading(true);
+    try {
+      const loggedIn = await signInUser(userCredentials);
+      if (!loggedIn) {
+        alert(
+          "Please Register first. If already registered, please provide the correct firstname, lastname, email, and password used while registering the account."
+        );
+        return;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      toast.success("Logging in successful!");
+      setTimeout(() => {
+        navigate(`/student-grades`);
+      }, 2000);
+    } catch (err) {
+      console.error("Error during login:", err);
+    } finally {
+      setLoading(false);
     }
-    toast.success("Logging in successful!");
-    setTimeout(() => {
-      navigate(`/student-grades`);
-    }, 2000);
   };
 
   return (
@@ -162,18 +179,20 @@ export default function Login() {
 
           {/* Login button */}
           <button
+            disabled={loading}
             onClick={handleLogin}
             className="w-full font-bold bg-pink-400 text-white py-2 px-4 rounded-md hover:bg-pink-500 focus:outline-pink-300 focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
           >
-            Login
+            {loading ? "Please wait..." : "Login"}
           </button>
 
           {/* Register button */}
           <button
+            disabled={loadingRegister}
             onClick={handleRegister}
             className="w-full font-bold bg-gray-200 text-black py-2 px-4 rounded-md hover:bg-gray-300 focus:outline-gray-300 focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
           >
-            Register
+            {loadingRegister ? "Registering..." : "Register"}
           </button>
         </div>
       </div>

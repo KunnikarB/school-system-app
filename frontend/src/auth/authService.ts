@@ -13,7 +13,53 @@ interface userCredential {
   password: string;
 }
 
-// create a new user with email and password
+const devAdminUIDs: string[] = [];
+
+//create a new admin user with email and password
+const registerAdminUser = async (userCredential: userCredential) => {
+  try {
+    const newAdminUser = await createUserWithEmailAndPassword(
+      auth,
+      userCredential.email,
+      userCredential.password
+    );
+    // Add to admin array if is admin
+    devAdminUIDs.push(newAdminUser.user.uid);
+    sessionStorage.setItem("adminUID", newAdminUser.user.uid);
+    setTimeout(() => {}, 3000);
+    console.log("New admin user created with:", newAdminUser.user.email);
+    console.log("Admin UID added to devAdminUIDs:", devAdminUIDs);
+    return newAdminUser.user;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Error creating new admin user:", error.message);
+    }
+  }
+};
+
+// Get token claims of the admin user
+const getAdminTokenClaims = async () => {
+  try {
+    const user = auth.currentUser;
+    if (!user) return null;
+    const tokenResult = await user.getIdTokenResult(true);
+    return tokenResult.claims;
+  } catch (error) {
+    console.error("Error fetching token claims:", error);
+  }
+};
+
+// Check if the user is admin
+const isAdmin = async () => {
+  const user = auth.currentUser;
+  if (!user) return false;
+  const claims = await getAdminTokenClaims();
+  console.log("Admin claims:", claims);
+  if (claims?.admin) return true;
+  return devAdminUIDs.includes(user.uid);
+};
+
+// create a new student user with email and password
 const createUser = async (userCredential: userCredential) => {
   try {
     const password = await validatePassword(auth, userCredential.password);
@@ -39,7 +85,7 @@ const createUser = async (userCredential: userCredential) => {
   }
 };
 
-// sign in an existing user with email and password
+// sign in an existing user student with email and password
 const signInUser = async (userCredential: userCredential) => {
   try {
     const existingUser = await signInWithEmailAndPassword(
@@ -56,7 +102,7 @@ const signInUser = async (userCredential: userCredential) => {
   }
 };
 
-// retrieve idToken of the current user
+// retrieve idToken of the current studentuser
 const getIdToken = async () => {
   try {
     const currentUser = auth.currentUser;
@@ -85,4 +131,12 @@ const signOutUser = async () => {
     }
   }
 };
-export { createUser, signInUser, signOutUser, getIdToken };
+export {
+  createUser,
+  signInUser,
+  signOutUser,
+  getIdToken,
+  registerAdminUser,
+  isAdmin,
+  getAdminTokenClaims,
+};
