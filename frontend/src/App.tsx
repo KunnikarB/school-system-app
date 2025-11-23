@@ -32,7 +32,7 @@ export default function App() {
           />
 
           <Route
-            path={`/student/grades`}
+            path={`/student-grades`}
             element={
               <ProtectedRoute>
                 <StudentGrades />

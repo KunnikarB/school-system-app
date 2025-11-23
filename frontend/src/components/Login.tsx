@@ -11,8 +11,8 @@ interface UserCredentials {
 
 export default function Login() {
   const navigate = useNavigate();
-
-  const [username, setUsername] = useState<string>("");
+  const [userfirstname, setUserfirstname] = useState<string>("");
+  const [userlastname, setUserlastname] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
@@ -22,24 +22,29 @@ export default function Login() {
   };
 
   const handleRegister = async () => {
+    const username = `${userfirstname} ${userlastname}`;
     if (!email || !password || !username) {
       alert("Please enter username, email, and password.");
       return;
     }
+
     const newUser = await createUser(userCredentials);
     if (newUser) {
       toast.success(`Registration successful!`);
       await updateProfile(newUser, {
-        displayName: username,
+        displayName: username, //from firebase.auth().currentUser
       });
     }
 
     console.log("Creating User with:", userCredentials);
+    console.log("New user created:", newUser);
   };
 
   const handleLogin = async () => {
-    if (!email || !password || !username) {
-      alert("Please enter the username, email, and password to log in.");
+    if (!email || !password || !userfirstname || !userlastname) {
+      alert(
+        "Please enter the firstname, lastname, email, and password to log in."
+      );
       return;
     }
     const loggedIn = await signInUser(userCredentials);
@@ -51,7 +56,7 @@ export default function Login() {
     }
     toast.success("Logging in successful!");
     setTimeout(() => {
-      navigate(`/student/grades`);
+      navigate(`/student-grades`);
     }, 2000);
   };
 
@@ -63,21 +68,39 @@ export default function Login() {
         </h2>
 
         <div className="space-y-4">
-          {/* Username */}
+          {/* User Firstname */}
           <div>
             <label
-              htmlFor="username"
+              htmlFor="userfirstname"
               className="block text-m font-medium text-black"
             >
-              Username:
+              Firstname:
             </label>
 
             <input
-              id="username"
+              id="userfirstname"
               type="text"
               placeholder="Enter your username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={userfirstname}
+              onChange={(e) => setUserfirstname(e.target.value)}
+              className="placeholder:text-sm mt-1 block w-full px-3 py-2 border border-pink-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500"
+            />
+          </div>
+          {/* User Lastname */}
+          <div>
+            <label
+              htmlFor="userlastname"
+              className="block text-m font-medium text-black"
+            >
+              Lastname:
+            </label>
+
+            <input
+              id="userlastname"
+              type="text"
+              placeholder="Enter your username"
+              value={userlastname}
+              onChange={(e) => setUserlastname(e.target.value)}
               className="placeholder:text-sm mt-1 block w-full px-3 py-2 border border-pink-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500"
             />
           </div>

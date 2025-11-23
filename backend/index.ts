@@ -19,7 +19,7 @@ const app = express();
 app.use(express.json());
 app.use(cors(corsOptions));
 
-app.use("/student", verifyIdToken, studentRoutes);
+app.use("/student", verifyIdToken, studentRoute);
 app.use("/admin/students", adminStudentsRoutes);
 app.use("/admin/grades", adminGradesChangeRoutes);
 app.use("/admin/grades", adminGradesViewRoutes);
