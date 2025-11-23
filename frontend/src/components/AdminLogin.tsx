@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { signInUser, createUser } from "../auth/authService";
+import { signInUser, registerAdminUser, isAdmin } from "../auth/authService";
 import { updateProfile } from "firebase/auth";
 import { toast } from "react-hot-toast";
 
@@ -15,6 +15,8 @@ export default function AdminLogin() {
   const [password, setPassword] = useState("");
   const [userfirstname, setUserfirstname] = useState<string>("");
   const [userlastname, setUserlastname] = useState<string>("");
+  const [loadingRegister, setLoadingRegister] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const userCredentials: UserCredentials = {
     email,
@@ -28,35 +30,58 @@ export default function AdminLogin() {
       return;
     }
 
-    const newUser = await createUser(userCredentials);
-    if (newUser) {
-      toast.success(`Admin Registration successful!`);
+    setLoadingRegister(true);
+
+    try {
+      const newUser = await registerAdminUser(userCredentials);
+
+      if (!newUser) {
+        alert("Registration failed. Try again.");
+        return;
+      }
+      // Force wait for Firebase to hydrate currentUser
+      await new Promise((resolve) => setTimeout(resolve, 500));
       await updateProfile(newUser, {
-        displayName: username, //from firebase.auth().currentUser
+        displayName: username,
       });
+
+      toast.success("Admin registration successful!");
+      console.log("New admin user created:", newUser);
+    } catch (err) {
+      console.error("Error during registration:", err);
+    } finally {
+      setLoadingRegister(false);
     }
-    console.log("Creating User with:", userCredentials);
-    console.log("New user created:", newUser);
   };
 
   const handleLogin = async () => {
     if (!email || !password || !userfirstname || !userlastname) {
       alert(
-        "Please enter the firstname, lastname, email, and password to log in."
+        "Please register first. If registered, enter the correct firstname, lastname, email, and password to log in."
       );
       return;
     }
-    const loggedIn = await signInUser(userCredentials);
-    if (!loggedIn) {
-      alert(
-        "Please Register first. If already registered, please provide the correct firstname, lastname, email, and password used while registering the account."
-      );
-      return;
-    }
-    toast.success("Logging in successful!");
-    setTimeout(() => {
+    setLoading(true);
+    try {
+      const loggedIn = await signInUser(userCredentials);
+
+      if (!loggedIn) {
+        alert("User not found. Register first.");
+        return;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      const checkIfAdmin = await isAdmin();
+      if (!checkIfAdmin) {
+        alert("Unauthorized: You do not have admin privileges.");
+        return;
+      }
+      toast.success("Logging in successful!");
       navigate("/admin-dashboard");
-    }, 1500);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -164,16 +189,18 @@ export default function AdminLogin() {
           {/* Login Button */}
           <button
             type="submit"
-            className="w-full font-bold bg-pink-400 text-white py-2 px-4 rounded-md hover:bg-pink-500 focus:outline-pink-300 focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
+            disabled={loading}
+            className="w-full font-bold bg-pink-400 text-white py-2 px-4 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Login
+            {loading ? "Please wait..." : "Login"}
           </button>
           {/* Register button */}
           <button
             onClick={handleRegister}
-            className="w-full font-bold bg-gray-200 text-black py-2 px-4 rounded-md hover:bg-gray-300 focus:outline-gray-300 focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+            disabled={loadingRegister}
+            className="w-full font-bold bg-gray-200 text-black py-2 px-4 rounded-md hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Register
+            {loadingRegister ? "Registering..." : "Register"}
           </button>
         </form>
       </div>
