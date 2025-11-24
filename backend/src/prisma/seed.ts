@@ -1,5 +1,5 @@
-import { PrismaClient } from "../src/generated/prisma-client/client.ts";
-import { GradeValue } from "../src/generated/prisma-client/enums.ts";
+import { PrismaClient } from "../generated/prisma-client/client";
+import { GradeValue } from "../generated/prisma-client/enums";
 
 const prisma = new PrismaClient();
 
@@ -181,7 +181,7 @@ async function main() {
     const enrolledSubjects = [...mandatory, ...group];
 
     // Create grade records for all levels of all enrolled subjects
-    for (const subj of allSubjects.filter((s) =>
+    for (const subj of allSubjects.filter((s: any) =>
       enrolledSubjects.includes(s.name)
     )) {
       const intendedYear = yearForLevel(subj.level);
