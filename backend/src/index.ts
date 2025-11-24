@@ -1,12 +1,12 @@
 import express from "express";
 import cors from "cors";
-import studentRoute from "./src/routes/studentRoutes.js";
-import adminStudentsRoutes from "./src/routes/adminRoutes/students.js";
-import adminGradesChangeRoutes from "./src/routes/adminRoutes/changeGrades.js";
-import adminGradesViewRoutes from "./src/routes/adminRoutes/viewGrades.js";
+import studentRoute from "./routes/studentRoutes";
+import adminStudentsRoutes from "./routes/adminRoutes/students";
+import adminGradesChangeRoutes from "./routes/adminRoutes/changeGrades";
+import adminGradesViewRoutes from "./routes/adminRoutes/viewGrades";
 //import outdatedStudentRoute from "./src/routes/outdatedRoutes/gradesByStudentId.js";
 import type { CorsOptions } from "cors";
-import verifyIdToken from "./middleware/authMiddleware.js";
+import verifyIdToken from "./middleware/authMiddleware";
 //import { PrismaClient } from "./src/generated/prisma-client/client.ts";
 
 //const prisma = new PrismaClient();
