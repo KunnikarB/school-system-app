@@ -1,5 +1,5 @@
-import { PrismaClient } from "../src/generated/prisma-client/client.ts";
-import { GradeValue } from "../src/generated/prisma-client/enums.ts";
+import { PrismaClient } from "../src/generated/prisma-client/client.js";
+import { GradeValue } from "../src/generated/prisma-client/enums.js";
 
 const prisma = new PrismaClient();
 
