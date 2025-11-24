@@ -1,13 +1,13 @@
 import "dotenv/config";
 import { Router } from "express";
-import { PrismaClient } from "../../generated/prisma-client/client.ts";
+import { PrismaClient } from "../../generated/prisma-client/client";
 import { z } from "zod";
 import {
   postGradeSchema,
   personNrSchema,
   studentSchema,
   subjectSchema,
-} from "../../validators/valdation.js";
+} from "../../validators/valdation";
 
 const prisma = new PrismaClient();
 const router = Router();
@@ -108,9 +108,11 @@ router.put("/:gradeId", async (req, res) => {
       .json({ message: "Grade updated successfully", updatedGrade });
   } catch (error) {
     if (error instanceof Error) {
-      res.status(500).json(error.message);
+      console.error(error);
+      return res
+        .status(500)
+        .json({ error: "Oops..! Server error updating grade." });
     }
-    res.status(500).json("Error unknown");
   }
 });
 
