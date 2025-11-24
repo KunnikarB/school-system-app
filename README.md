@@ -4,19 +4,19 @@ A full-stack web application for managing student accounts, importing student da
 
 ---
 
-- 👤 Login
+## 👤 Login
 
 <img width="824" height="749" alt="Login" src="https://github.com/user-attachments/assets/a2f3e3d0-a865-44cf-b544-10d8a060cecb" />
 
-- 🧿 Admin Student Accounts
+## 🧿 Admin Student Accounts
   
   <img width="1151" height="956" alt="Screenshot 2025-11-24 at 08 16 01" src="https://github.com/user-attachments/assets/fe938d74-56a0-4173-9d0a-e2f880cdd895" />
 
-- 👩🏻‍💻 Admin Register Grades
+## 👩🏻‍💻 Admin Register Grades
   
 <img width="992" height="960" alt="Screenshot 2025-11-24 at 08 15 40" src="https://github.com/user-attachments/assets/4a598f24-cef2-4e38-9048-9933b32a666b" />
 
-- 👩🏻‍🎓 Student Profile
+## 👩🏻‍🎓 Student Profile
   
   <img width="885" height="681" alt="Screenshot 2025-11-24 at 08 18 39" src="https://github.com/user-attachments/assets/fca5693a-2e45-45c5-abae-d82c918f4dc8" />
 
