@@ -13,7 +13,20 @@ interface userCredential {
   password: string;
 }
 
-const devAdminUIDs: string[] = [];
+// Load admin UIDs from localStorage if present
+const loadAdminUIDs = (): string[] => {
+  const stored = localStorage.getItem("devAdminUIDs");
+  return stored ? JSON.parse(stored) : [];
+};
+
+// Save the admin UIDs to localStorage
+const saveAdminUID = (uid: string) => {
+  const current = loadAdminUIDs();
+  if (!current.includes(uid)) {
+    current.push(uid);
+    localStorage.setItem("devAdminUIDs", JSON.stringify(current));
+  }
+};
 
 //create a new admin user with email and password
 const registerAdminUser = async (userCredential: userCredential) => {
@@ -23,12 +36,11 @@ const registerAdminUser = async (userCredential: userCredential) => {
       userCredential.email,
       userCredential.password
     );
-    // Add to admin array if is admin
-    devAdminUIDs.push(newAdminUser.user.uid);
+    // Save admin UID to localStorage
+    saveAdminUID(newAdminUser.user.uid);
     sessionStorage.setItem("adminUID", newAdminUser.user.uid);
-    setTimeout(() => {}, 3000);
     console.log("New admin user created with:", newAdminUser.user.email);
-    console.log("Admin UID added to devAdminUIDs:", devAdminUIDs);
+    console.log("Admin UID saved to localStorage");
     return newAdminUser.user;
   } catch (error) {
     if (error instanceof Error) {
@@ -56,6 +68,8 @@ const isAdmin = async () => {
   const claims = await getAdminTokenClaims();
   console.log("Admin claims:", claims);
   if (claims?.admin) return true;
+  // check local dev admin UIDs
+  const devAdminUIDs = loadAdminUIDs();
   return devAdminUIDs.includes(user.uid);
 };
 
@@ -131,6 +145,7 @@ const signOutUser = async () => {
     }
   }
 };
+
 export {
   createUser,
   signInUser,

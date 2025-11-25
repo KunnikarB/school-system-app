@@ -22,9 +22,9 @@ app.use(express.json());
 app.use(cors(corsOptions));
 
 app.use("/student", verifyIdToken, studentRoute);
-app.use("/admin/students", adminStudentsRoutes);
-app.use("/admin/grades", adminGradesChangeRoutes);
-app.use("/admin/grades", adminGradesViewRoutes);
+app.use("/admin/students", verifyIdToken, adminStudentsRoutes);
+app.use("/admin/grades", verifyIdToken, adminGradesChangeRoutes);
+app.use("/admin/grades", verifyIdToken, adminGradesViewRoutes);
 //app.use("/student", outdatedStudentRoute);
 
 app.listen(PORT, () => {
